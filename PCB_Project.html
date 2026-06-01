@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Custom PCB Design — Ryan Thomsen</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Share+Tech+Mono&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --grid-color: rgba(100, 149, 200, 0.18);
+    --grid-bold: rgba(100, 149, 200, 0.32);
+    --ink: #1a2a3a;
+    --ink-light: #3a5a7a;
+    --accent: #c0392b;
+    --accent2: #2980b9;
+    --paper: #f5f2ea;
+    --grid-size: 28px;
+    --grid-major: 140px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      linear-gradient(var(--grid-bold) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-bold) 1px, transparent 1px),
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+    background-size:
+      var(--grid-major) var(--grid-major),
+      var(--grid-major) var(--grid-major),
+      var(--grid-size) var(--grid-size),
+      var(--grid-size) var(--grid-size);
+    pointer-events: none;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+    background: rgba(245, 242, 234, 0.92);
+    border-bottom: 1px solid var(--grid-bold);
+    backdrop-filter: blur(4px);
+  }
+
+  .nav-logo {
+    font-family: 'Special Elite', cursive;
+    font-size: 1.1rem;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  .nav-back {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+  }
+
+  .nav-back:hover { color: var(--accent); }
+  .nav-back::before { content: '←'; }
+
+  /* MAIN CONTENT */
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 7rem 4rem 5rem;
+  }
+
+  /* PROJECT HEADER */
+  .project-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--grid-bold);
+    padding-bottom: 2rem;
+  }
+
+  .project-meta {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent2);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .project-meta::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: var(--accent2);
+  }
+
+  h1 {
+    font-family: 'Special Elite', cursive;
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: var(--ink);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .project-tagline {
+    font-size: 1.05rem;
+    color: var(--ink-light);
+    line-height: 1.7;
+    max-width: 600px;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.2rem;
+  }
+
+  .tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border: 1px solid var(--ink-light);
+    color: var(--ink-light);
+  }
+
+  /* SECTION BLOCKS */
+  .project-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-label h2 {
+    font-family: 'Special Elite', cursive;
+    font-size: 1.4rem;
+    color: var(--ink);
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--grid-bold);
+  }
+
+  .section-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent2);
+    letter-spacing: 0.1em;
+  }
+
+  .project-section p {
+    font-size: 0.95rem;
+    color: var(--ink-light);
+    line-height: 1.8;
+  }
+
+  /* IMAGE GALLERY */
+  .gallery {
+    margin-bottom: 3rem;
+  }
+
+  .gallery-label {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .gallery-label h2 {
+    font-family: 'Special Elite', cursive;
+    font-size: 1.4rem;
+    color: var(--ink);
+  }
+
+  .gallery-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--grid-bold);
+  }
+
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 2rem;
+  }
+
+  .gallery-item {
+    position: relative;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    display: block;
+    border: 1.5px solid var(--ink);
+  }
+
+  .gallery-item-placeholder {
+    width: 100%;
+    height: 260px;
+    background: #e0e8f0;
+    border: 1.5px solid var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--ink-light);
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .gallery-caption {
+    margin-top: 0.6rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .caption-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .caption-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-light);
+    line-height: 1.6;
+  }
+
+  /* ANNOTATION STYLE DIMENSION LINE */
+  .annotation {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent2);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .annotation::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--accent2);
+  }
+
+  /* BACK BUTTON BOTTOM */
+  .bottom-nav {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--grid-bold);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.7rem 1.6rem;
+    border: 1.5px solid var(--ink);
+    color: var(--ink);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .btn:hover { background: var(--ink); color: var(--paper); }
+
+  @media (max-width: 768px) {
+    .page { padding: 6rem 1.5rem 3rem; }
+    nav { padding: 1rem 1.5rem; }
+    .gallery-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Ryan Thomsen</a>
+  <a href="index.html#portfolio" class="nav-back">Back to Portfolio</a>
+</nav>
+
+<div class="page">
+
+  <!-- PROJECT HEADER -->
+  <div class="project-header">
+    <div class="project-meta">Research · 2026</div>
+    <h1>Custom PCB Design</h1>
+    <p class="project-tagline">
+      Using KiCAD I designed a custom PCB to power and operate flickering infrared glasses used in research.
+    </p>
+    <div class="project-tags">
+      <span class="tag">Circuit Schematics</span>
+      <span class="tag">KiCAD</span>
+      <span class="tag">Soldering</span>
+      <span class="tag">Embedded Systems</span>
+    </div>
+  </div>
+
+  <!-- PROJECT GOAL -->
+  <div class="project-section">
+    <div class="section-label">
+      <span class="section-num">01</span>
+      <h2>Project Goal</h2>
+    </div>
+    <p>
+      To power and operate a wearable pair of eye glasses that flicker infrared LEDs. 
+      The footprint needed to be as small as possible to fit within the design constraints of the frame.
+      Wanted to keep the circuit as similar to the breadboard design, so large 9V batteries were used which further restricted space. 
+      Since this was to be used with human participants, important saftey limitations on infrared exposure were also considered.
+    </p>
+  </div>
+
+  <!-- PROJECT PURPOSE -->
+  <div class="project-section">
+    <div class="section-label">
+      <span class="section-num">02</span>
+      <h2>Project Purpose</h2>
+    </div>
+    <p>
+      To be used in multiple labs at the University of Florida to investigate nerual response to infrared light flickering at various frequencies. 
+    </p>
+  </div>
+
+  <!-- IMAGE GALLERY -->
+  <div class="gallery">
+    <div class="gallery-label">
+      <span class="section-num">03</span>
+      <h2>Design & Process</h2>
+    </div>
+
+    <div class="gallery-grid">
+
+      <div class="gallery-item">
+        <img src="PCB_Project/PCB_Schematic.png" alt="Description">
+         <div class="gallery-caption">
+          <span class="caption-num">PCB Layout —</span>
+          <span class="caption-text">Compact layout with efficient copper tracing.</span>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <img src="PCB_Project/PCB_BirdsEye.png" alt="Description">
+          <div class="gallery-caption">
+           <span class="caption-num">PCB Rendering —</span>
+           <span class="caption-text">KiCAD rendering of the PCB.</span>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <img src="PCB_Project/PCB_Size.jpg" alt="Description">
+          <div class="gallery-caption">
+            <span class="caption-num">Size Reference —</span>
+            <span class="caption-text">Reference of PCB size when compared to a 9V battery.</span>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <img src="PCB_Project/PCB_CodeUpload2.jpg" alt="Description">
+          <div class="gallery-caption">
+            <span class="caption-num">Uploading Code —</span>
+            <span class="caption-text">Due to a slight design oversight, the code had to be flashed onto the microcontroller (ATTiny85) through unconventional methods. 
+              However, this developed my ability to solder very small components.</span>
+        </div>
+      </div>
+      
+      <div class="gallery-item">
+        <img src="PCB_Project/PCB_Validation.jpg" alt="Description">
+          <div class="gallery-caption">
+            <span class="caption-num">Validation —</span>
+            <span class="caption-text">Using an oscilloscope to validate flickering frequency.</span>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <img src="PCB_Project/PCB_Finished.jpg">
+          <div class="gallery-caption">
+            <span class="caption-num">Final Result —</span>
+           <span class="caption-text">Fully assembled PCB with components.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PROJECT OUTCOME -->
+  <div class="project-section">
+    <div class="section-label">
+      <span class="section-num">04</span>
+      <h2>Project Outcome</h2>
+    </div>
+    <p>
+      PCB was successfully assembled, operated as expected, and fit into the glasses frame neatly.
+    </p>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <a href="index.html#portfolio" class="btn">← Back to Portfolio</a>
+    <a href="project2.html" class="btn">Next Project →</a>
+  </div>
+
+</div>
+
+</body>
+</html>
